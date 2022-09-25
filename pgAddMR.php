@@ -1,0 +1,147 @@
+<?php 
+session_start();
+if(!isset($_SESSION["adminusername"])){
+		header("Location:logout.php");
+}
+include("db_connect.php");
+$db=new DB_Connect();
+$con=$db->connect();
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Add New MR Details | PharmTrades</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="../vendors/base/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../images/favicon.png" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <?php
+		include_once("navafterlogin.php");
+	?>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+	<?php
+		include_once("navsidebarafterlogin.php");
+	?>
+      <!-- partial -->
+      <div class="main-panel">        
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Add MR's Details</h4>
+                  <div class="forms-sample">
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 col-12">
+							<div class="form-group">
+								<label for="txtName">MR Name</label>
+								<input type="text" class="form-control" id="txtName" placeholder="MR Name">
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12">
+							<div class="form-group">
+								<label for="txtMobileNumber">Mobile Number</label>
+								<input type="text" class="form-control" id="txtMobileNumber" placeholder="Mobile Number">
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12">
+							<div class="form-group">
+								<label for="txtEmail">Email ID</label>
+								<input type="text" class="form-control" id="txtEmail" placeholder="Email ID">
+							</div>
+						</div>
+					</div>
+					<br>
+					<button type="submit" class="btn btn-primary me-2" id="btnSubmit" onclick="save();">Submit</button>
+				  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <?php
+			include_once("footerafterlogin.php");
+		?>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="../vendors/base/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="../js/off-canvas.js"></script>
+  <script src="../js/hoverable-collapse.js"></script>
+  <script src="../js/template.js"></script>
+  <script src="../js/todolist.js"></script>
+  <!-- End custom js for this page-->
+<script>
+  function save(){
+			if($("#txtName").val()==""){
+				alert("Enter MR's Name");
+				$("#txtName").focus();
+			}
+			else if($("#txtMobileNumber").val()==""){
+				alert("Enter Mobile Number");
+				$("#txtMobileNumber").focus();
+			}
+			else if($("#txtEmail").val()==""){
+				alert("Enter Email ID");
+				$("#txtEmail").focus();
+			}
+			else{
+				$.ajax({
+					type:"POST",
+					url:"apiSaveMR.php",
+					data:{name:$("#txtName").val(),mobileno:$("#txtMobileNumber").val(),email:$("#txtEmail").val()},
+					success:function(response){
+						//alert(response);
+						if($.trim(response)=="Success"){
+							alert("Record saved successfully.");
+							$("#txtName").val("");
+							$("#txtMobileNumber").val("");
+							$("#txtEmail").val("");
+						}
+						else if($.trim(response)=="Error")
+						{
+							alert("Record not saved. Please re-try.");
+						}
+						else if($.trim(response)=="Exist")
+						{
+							alert("Mobile Number already in use.");
+						}
+						else
+						{
+							alert("Something went wrong. Please try after sometime");
+						}
+					}
+				});
+			}
+		 }
+	
+</script>	
+</body>
+
+</html>
